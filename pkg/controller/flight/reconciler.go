@@ -6,7 +6,7 @@ import (
 	"github.com/go-kit/kit/log"
 	core_v1 "k8s.io/api/core/v1"
 
-	"github.com/sapcc/kubernikus/pkg/apis/kubernikus/v1"
+	v1 "github.com/sapcc/kubernikus/pkg/apis/kubernikus/v1"
 	openstack_kluster "github.com/sapcc/kubernikus/pkg/client/openstack/kluster"
 )
 

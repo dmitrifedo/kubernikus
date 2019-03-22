@@ -17,7 +17,7 @@ import (
 	"k8s.io/client-go/tools/cache"
 
 	"github.com/sapcc/kubernikus/pkg/api/models"
-	"github.com/sapcc/kubernikus/pkg/apis/kubernikus/v1"
+	v1 "github.com/sapcc/kubernikus/pkg/apis/kubernikus/v1"
 	"github.com/sapcc/kubernikus/pkg/client/openstack/compute"
 	"github.com/sapcc/kubernikus/pkg/util/generator"
 )
@@ -25,6 +25,7 @@ import (
 type KlusterClient interface {
 	CreateNode(*models.NodePool, string, []byte) (string, error)
 	DeleteNode(string) error
+	RebootNode(string) error
 	ListNodes(*models.NodePool) ([]Node, error)
 	SetSecurityGroup(nodeID string) error
 	EnsureKubernikusRuleInSecurityGroup() (bool, error)
@@ -124,6 +125,15 @@ func (c *klusterClient) CreateNode(pool *models.NodePool, name string, userData 
 
 func (c *klusterClient) DeleteNode(id string) (err error) {
 	err = servers.Delete(c.ComputeClient, id).ExtractErr()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c *klusterClient) RebootNode(id string) (err error) {
+	err = servers.Reboot(c.ComputeClient, id, &servers.RebootOpts{Type: servers.SoftReboot}).ExtractErr()
 	if err != nil {
 		return err
 	}
